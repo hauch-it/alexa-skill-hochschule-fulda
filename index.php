@@ -79,6 +79,8 @@ foreach($tr as $trs) {
 							}
 						}
 						//echo $value . '<br>';
+						$val = utf8_decode($value);
+						echo $val;
 						$foodSingle['title'] = trim($value);
 					}
 				}
@@ -112,7 +114,7 @@ foreach($tr as $trs) {
 }
 
 //var_dump($foodList);
-echo json_encode($foodList, JSON_PRETTY_PRINT);
+//echo json_encode($foodList, JSON_PRETTY_PRINT);
 
 if (curl_errno($ch)) {
     echo 'Error:' . curl_error($ch);
