@@ -70,7 +70,6 @@ foreach($tr as $trs) {
 				foreach($tds->childNodes as $divs) {
 					if ($divs->nodeName=='div') {
 						// Get spans
-						$title = '';
 						foreach($divs->childNodes as $spans) {
 							if ($spans->nodeName=='span') {
 								// Remove ingredients
