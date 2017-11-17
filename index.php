@@ -28,7 +28,7 @@ $ch = curl_init();
 
 curl_setopt($ch, CURLOPT_URL, "http://www.maxmanager.de/daten-extern/sw-giessen/html/speiseplan-render.php");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, "func=make_spl&locId=fulda&lang=de&date=2017-11-17");
+curl_setopt($ch, CURLOPT_POSTFIELDS, "func=make_spl&locId=fulda&lang=de&date=2017-11-21");
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
 
@@ -46,49 +46,76 @@ $headers[] = "Connection: keep-alive";
 $headers[] = "Referer: http://www.maxmanager.de/daten-extern/sw-giessen/html/speiseplaene.php?einrichtung=fulda";
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
+// cURL Result
 $result = curl_exec($ch);
+$result = strip_tags($result, '<html><body><table><tbody><div><tr><td><span><img><p>');
 
 @$dom = new DOMDocument();
 @$dom->loadHTML($result);
 
+// food
+$foodList = array();
+$foodSingle = array();
+$i = 1;
+$bfound = False;
+
 // Get all trs (contains food)
 $tr = $dom->getElementsbyTagName('tr');
-foreach($tr as $trs){
+foreach($tr as $trs) {
 	// Get all tds (contains image, text, content)
 	foreach($trs->childNodes as $tds) {
 		// Make sure, to get only tds
 		if($tds->nodeName=='td') {
-		
 			// Cell1 contains text
 			if ($tds->hasAttribute('class') && strstr($tds->getAttribute('class'), 'cell1')) {
 				// Get divs
 				foreach($tds->childNodes as $divs) {
 					if ($divs->nodeName=='div') {
-					
-						//echo $divs->nodeValue;
-						$search = '/\d{1,2}[a-h]{0,1}[ ]{1}|\d{1,2}[a-h]{0,1}[,]{1}|\d{1,2}/';
-						$value = preg_replace($search, '', $divs->nodeValue);
-						$value = str_replace('amit', 'mit', $value);
-						$value = str_replace('ean', 'an', $value);
-						echo $value . '<br>';
+						// Get spans
+						$title = '';
+						foreach($divs->childNodes as $spans) {
+							if ($spans->nodeName=='span') {
+								// Remove ingredients
+								$search = '/\d{1,2}[a-h]{0,1}/';
+								$value = preg_replace($search, "", $divs->nodeValue);
+								$value = str_replace(',', '', $value);
+							}
+						}
+						//echo $value . '<br>';
+						$foodSingle['title'] = trim($value);
 					}
 				}
 			}
-		
 			// Cell2 contains images (with content as title-Attribute)
 			if ($tds->hasAttribute('class') && strstr($tds->getAttribute('class'), 'cell2')) {
 				// Get imgs
+				$ingredients = array();
 				foreach($tds->childNodes as $imgs) {
 					if ($imgs->nodeName=='img') {
 						//print_r($imgs->attributes);
 						$title = $imgs->getAttribute('title');
-						echo $title . '<br>';
+						$ingredients[] = trim($title);
 					}
 				}
+				$foodSingle['category'] = $ingredients;
+			}
+			// Cell3 contains prices
+			if ($tds->hasAttribute('class') && strstr($tds->getAttribute('class'), 'cell3')) {
+				// No nested objects
+				$price = $tds->nodeValue;
+				$prices = explode(" /", $price);
+				$foodSingle['price'] = trim($prices[0]);
 			}
         }
     }
+    // add to list (@ suppress warnings)
+    if (@$foodSingle['title'] != "") {
+    	$foodList[] = $foodSingle;
+    }
 }
+
+//var_dump($foodList);
+echo json_encode($foodList, JSON_PRETTY_PRINT);
 
 if (curl_errno($ch)) {
     echo 'Error:' . curl_error($ch);
