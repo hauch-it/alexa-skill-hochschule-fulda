@@ -56,8 +56,6 @@ $result = strip_tags($result, '<html><body><table><tbody><div><tr><td><span><img
 // food
 $foodList = array();
 $foodSingle = array();
-$i = 1;
-$bfound = False;
 
 // Get all trs (contains food)
 $tr = $dom->getElementsbyTagName('tr');
