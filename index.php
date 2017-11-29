@@ -118,6 +118,7 @@ foreach($tr as $trs) {
 					if ($imgs->nodeName=='img') {
 						//print_r($imgs->attributes);
 						$title = $imgs->getAttribute('title');
+						$title = utf8_decode($title);
 						$ingredients[] = trim($title);
 					}
 				}
