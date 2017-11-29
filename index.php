@@ -28,14 +28,14 @@ $ch = curl_init();
 
 curl_setopt($ch, CURLOPT_URL, "http://www.maxmanager.de/daten-extern/sw-giessen/html/speiseplan-render.php");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, "func=make_spl&locId=fulda&lang=de&date=2017-11-21");
+curl_setopt($ch, CURLOPT_POSTFIELDS, "func=make_spl&locId=fulda&lang=de&date=2017-11-29");
 curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
+curl_setopt($ch, CURLOPT_ENCODING, 'UTF-8');
 
 $headers = array();
 $headers[] = "Pragma: no-cache";
 $headers[] = "Origin: http://www.maxmanager.de";
-$headers[] = "Accept-Encoding: gzip, deflate";
+$headers[] = "Accept-Encoding: *";
 $headers[] = "Accept-Language: de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7";
 $headers[] = "User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Mobile Safari/537.36";
 $headers[] = "Content-Type: application/x-www-form-urlencoded";
@@ -48,7 +48,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 // cURL Result
 $result = curl_exec($ch);
-$result = strip_tags($result, '<html><body><table><tbody><div><tr><td><span><img><p>');
+$result = strip_tags($result, '<html><body><table><tbody><div><tr><td><span><img><p><sup>');
 
 @$dom = new DOMDocument();
 @$dom->loadHTML($result);
@@ -70,18 +70,43 @@ foreach($tr as $trs) {
 				foreach($tds->childNodes as $divs) {
 					if ($divs->nodeName=='div') {
 						// Get spans
+						$title = "";
+						$ingredients = array();
 						foreach($divs->childNodes as $spans) {
 							if ($spans->nodeName=='span') {
-								// Remove ingredients
-								$search = '/\d{1,2}[a-h]{0,1}/';
-								$value = preg_replace($search, "", $divs->nodeValue);
-								$value = str_replace(',', '', $value);
+								// Get title of food
+								$title = $title . ' ' . $spans->nodeValue;
+								// Get sups
+								foreach($spans->childNodes as $sups) {
+									// Filter ingredients
+									if ($sups->tagName=='sup') {
+										// Add all ingredients to array
+										$ingredients[] = $sups->nodeValue;
+									}
+								}
 							}
 						}
-						//echo $value . '<br>';
-						$val = utf8_decode($value);
-						echo $val;
-						$foodSingle['title'] = trim($value);
+						// Remove ingredients
+						foreach($ingredients as $ingredient) {
+							$title = str_replace($ingredient, "", $title);
+						}
+						// UTF-8 for Umlauts
+						$title = utf8_decode($title);
+						// Some cleaning
+						$title = str_replace(" - ab 0,70 €", "", $title);
+						$title = str_replace("aus ökol. Anbau DE-ÖKO-007", "aus ökologischem Anbau", $title);
+						
+						// Mensa Vital fix (remove p.P.)
+						$mensaVital = 'p.';
+						$pos = strpos($title, $mensaVital);
+						// only for Mensa Vital
+						if ($pos != false) {
+							$title = substr($title, 0, $pos-2);
+						}
+						
+						// Add to List
+						$foodSingle['title'] = $title;
+						$title = "";
 					}
 				}
 			}
@@ -114,7 +139,7 @@ foreach($tr as $trs) {
 }
 
 //var_dump($foodList);
-//echo json_encode($foodList, JSON_PRETTY_PRINT);
+echo json_encode($foodList, JSON_UNESCAPED_UNICODE);
 
 if (curl_errno($ch)) {
     echo 'Error:' . curl_error($ch);
