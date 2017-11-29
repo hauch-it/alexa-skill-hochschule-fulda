@@ -28,7 +28,7 @@ $ch = curl_init();
 
 curl_setopt($ch, CURLOPT_URL, "http://www.maxmanager.de/daten-extern/sw-giessen/html/speiseplan-render.php");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, "func=make_spl&locId=fulda&lang=de&date=2017-11-29");
+curl_setopt($ch, CURLOPT_POSTFIELDS, "func=make_spl&locId=fulda&lang=de&date=2017-12-04");
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_ENCODING, 'UTF-8');
 
@@ -66,12 +66,12 @@ foreach($tr as $trs) {
 		if($tds->nodeName=='td') {
 			// Cell1 contains text
 			if ($tds->hasAttribute('class') && strstr($tds->getAttribute('class'), 'cell1')) {
+				$title = "";
+				$ingredients = array();
 				// Get divs
 				foreach($tds->childNodes as $divs) {
 					if ($divs->nodeName=='div') {
 						// Get spans
-						$title = "";
-						$ingredients = array();
 						foreach($divs->childNodes as $spans) {
 							if ($spans->nodeName=='span') {
 								// Get title of food
@@ -95,18 +95,19 @@ foreach($tr as $trs) {
 						// Some cleaning
 						$title = str_replace(" - ab 0,70 €", "", $title);
 						$title = str_replace("aus ökol. Anbau DE-ÖKO-007", "aus ökologischem Anbau", $title);
+						$title = str_replace("Textzusätze Speiseleitsystem (leere Rezeptur!) ", "", $title);
 						
 						// Mensa Vital fix (remove p.P.)
-						$mensaVital = 'p.';
+						$mensaVital = '.';
 						$pos = strpos($title, $mensaVital);
 						// only for Mensa Vital
 						if ($pos != false) {
-							$title = substr($title, 0, $pos-2);
+							$title = substr($title, 0, $pos-1);
 						}
-						
-						// Add to List
+					}
+					// Add to List
+					if ($title != "") {
 						$foodSingle['title'] = $title;
-						$title = "";
 					}
 				}
 			}
@@ -133,9 +134,9 @@ foreach($tr as $trs) {
 			}
         }
     }
-    // add to list (@ suppress warnings)
-    if (@$foodSingle['title'] != "") {
-    	$foodList[] = $foodSingle;
+    // add to list when new food item
+    if ($foodSingle['title'] != "" && !in_array($foodSingle, $foodList)) {
+    	array_push($foodList, $foodSingle);
     }
 }
 
