@@ -26,6 +26,7 @@ class MensaClass
 			}
 		}
 		// result
+        return $result;
 		//var_dump($result);
 	}	
 

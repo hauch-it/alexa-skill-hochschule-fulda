@@ -1,7 +1,10 @@
 <?php
 require_once('data.php');
+require_once('alexa.php');
 
 $mensa = new MensaClass();
-$food = $mensa->filter('2017-12-04', 'fulda', 'vegetarisch');
+
+$alexa = new AlexaClass();
+$jsonOut = $alexa->alexaJsonOutTitle($mensa->filter('2017-12-05', 'fulda', 'vegetarisch'));
 
 ?>
