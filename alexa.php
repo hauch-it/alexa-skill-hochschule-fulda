@@ -50,8 +50,8 @@ class AlexaClass {
         //replace the from json_encode automatically set Escape-Sign from the <speak> closing Tag
         $json = str_replace("\\", "", $json);
         $json = str_replace('&quot;', '"', $json);
-		$json = str_replace('&lt;', '<', $json);
-		$json = str_replace('&gt;', '>', $json);
+	$json = str_replace('&lt;', '<', $json);
+	$json = str_replace('&gt;', '>', $json);
         //give Alexa something to speak
         return $json;
     }
