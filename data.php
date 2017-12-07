@@ -20,12 +20,13 @@ class MensaClass
 				// match
 				if ($cat == $category) {
 					$result[] = $entry;
-					echo $entry['title'] . '<br>';
+					//echo $entry['title'] . '<br>';
 					break;
 				}
 			}
 		}
 		// result
+        return $result;
 		//var_dump($result);
 	}	
 
@@ -57,7 +58,7 @@ class MensaClass
 		$headers[] = "Cache-Control: no-cache";
 		$headers[] = "X-Requested-With: XMLHttpRequest";
 		$headers[] = "Connection: keep-alive";
-		$headers[] = "Referer: http://www.maxmanager.de/daten-extern/sw-giessen/html/speiseplaene.php?einrichtung=fulda";
+		$headers[] = "Referer: http://www.maxmanager.de/daten-extern/sw-giessen/html/speiseplaene.php?einrichtung='.$location.'";
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 		// cURL Result
@@ -131,9 +132,12 @@ class MensaClass
 									}
 								}				
 								// Add to List
-								if ($title != "") {
-									$foodSingle['title'] = $title;
-								}
+                                // Add 'Pasta' to String when the String starts with ' mit'
+								if ($title != "" && substr($title, 0, 4) == ' mit') {
+									$foodSingle['title'] = ' Pasta'.$title;
+								} elseif($title != "" && substr($title, 0, 4) != ' mit') {
+                                    $foodSingle['title'] = $title;
+                                }
 						}
 					}
 					
