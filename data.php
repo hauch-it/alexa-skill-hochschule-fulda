@@ -20,7 +20,7 @@ class MensaClass
 				// match
 				if ($cat == $category) {
 					$result[] = $entry;
-					echo $entry['title'] . '<br>';
+					//echo $entry['title'] . '<br>';
 					break;
 				}
 			}
@@ -171,9 +171,6 @@ class MensaClass
     		}
 		}
 		// return Json
-         echo '<pre>';
-			var_dump($foodList);
-         echo '</pre>';
 		return $foodList;
 	}
 	// end getJson()
