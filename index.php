@@ -1,32 +1,19 @@
-<<<<<<< HEAD
 <?php
-// Daten aus dem Request holen
-$entityBody = file_get_contents ( 'php://input' );
- 
-// Datei namens echo.log öffen 
-$datei_handle = fopen ( "echo.log", "a+" );
- 
-// etwas validierung      
-if (is_string($entityBody ) && json_decode ( $entityBody ) != null) {
-// Request schoen formatieren
-   fputs ( $datei_handle, "\n" );
-   fputs ( $datei_handle, json_encode ( json_decode ( $entityBody ), JSON_PRETTY_PRINT ) );
-   fputs ( $datei_handle, "\n" );
-}
-// alles speichern und beenden      
-fclose ( $datei_handle );
-?>
-=======
-<?php
+
+// Imports
 require_once('data.php');
 require_once('alexa.php');
 
+// Classes
 $mensa = new MensaClass();
 $alexa = new AlexaClass();
 
-$jsonOut = $alexa->alexaJsonOutTitleAfterFilter($mensa->filter('2017-12-07', 'fulda', 'vegetarisch'));
+// Filtered JSON on Date, Location, Category
+$data = $mensa->filter('2017-12-21', 'fulda', 'vegetarisch');
+$plain = $mensa->toPlainText($data);
+
+$json = $alexa->response($plain);
 
 header ( 'Content-Type: application/json' );
-echo $jsonOut;
+echo $json;
 ?>
->>>>>>> f1fe42de0b7830cc4ade99d3b024134a96e8f0e2
