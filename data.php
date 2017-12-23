@@ -13,6 +13,11 @@ class MensaClass
 		$number = count($filteredJson);
 		$plainText = "Es gibt " . $number . " Gerichte.";
 		
+		// No entry found
+		if ($number == 0) {
+			return '<say-as interpret-as="interjection">Was zur Hölle. Nix da.</say-as>';
+		}
+		
 		// Skip intro when there is only one entry
 		if ($number == 1) {
 			return "Es gibt: " . $filteredJson[0]['title'];
@@ -25,10 +30,31 @@ class MensaClass
 				$rnumber++;
 			}
 			// add wish
-			$plainText .= " Guten Appetit!";
+			$wish = $this->getWish();
+			$plainText .= $wish;
 			return $plainText;
 		}
 		
+	}
+	
+	public function getWish() {
+		$greetings = array(
+			' <say-as interpret-as="interjection">Lass es dir schmecken</say-as>',
+			' <say-as interpret-as="interjection">Mach\'s gut</say-as>',
+			' <say-as interpret-as="interjection">Lecker</say-as>',
+			' <say-as interpret-as="interjection">iiieh</say-as>',
+			' <say-as interpret-as="interjection">Hals und Beinbruch</say-as>',
+			' <say-as interpret-as="interjection">Guten Appetit</say-as>',
+			' <say-as interpret-as="interjection">bon appetit</say-as>',
+			' <say-as interpret-as="interjection">Arrivederci</say-as>',
+			' <say-as interpret-as="interjection">Zum Wohl</say-as>'
+		);
+		
+		// select random greeting
+		$number = count($greetings);
+		$rand = rand(0, $number);
+		
+		return $greetings[$rand];
 	}
 
 	/*

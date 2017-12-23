@@ -12,8 +12,9 @@ $alexa = new AlexaClass();
 $input = file_get_contents('php://input');
 $echoArray = json_decode($input);
 
-// Extract date from request
+// Extract values from request slot
 $date = $echoArray->request->intent->slots->DateSlot->value;
+$category = $echoArray->request->intent->slots->CategorySlot->value;
 
 // Filtered JSON on Date, Location, Category
 $data = $mensa->filter($date, 'fulda', 'vegetarisch');
