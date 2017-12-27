@@ -15,7 +15,7 @@ class MensaClass
 		
 		// No entry found
 		if ($number == 0) {
-			return '<say-as interpret-as="interjection">Was zur Hölle. Nix da.</say-as>';
+			return '<say-as interpret-as="interjection">Was zur Hölle. Nichts da.</say-as>';
 		}
 		
 		// Skip intro when there is only one entry
@@ -63,19 +63,18 @@ class MensaClass
 		@return - Json with filtered food
 	*/
 	public function filter($date, $location, $category) {
-		$dom = $this->getDiv($date, $location);
-		$food = $this->getJson($dom);
+		$dom = $this->getDiv( $date, $location );
+		$food = $this->getJson( $dom );
 		
 		// filter by category
 		$result = array();
-		foreach($food as $entry) {
+		foreach( $food as $entry ) {
 			// loop through each foods category
 			//var_dump($entry);
-			foreach($entry['category'] as $cat) {
+			foreach( $entry['category'] as $cat ) {
 				// match
-				if ($cat == $category) {
+				if ( strtolower($cat) == $category ) {
 					$result[] = $entry;
-					//echo $entry['title'] . '<br>';
 					break;
 				}
 			}
