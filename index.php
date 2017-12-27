@@ -16,8 +16,22 @@ $echoArray = json_decode( $input );
 $date = $echoArray->request->intent->slots->DateSlot->value;
 $category = $echoArray->request->intent->slots->CategorySlot->value;
 
-// Filtered JSON on Date, Location, Category
-$data = $mensa->filter( $date, 'fulda', $category );
+// Validate date
+if (strlen ($date) == 0 ) {
+	// When date is not set, then use current date
+	$date = date( 'Y-m-d' );
+}
+// Validate category
+if (strlen ($category) == 0 ) {
+	// No filter, all entries
+	$data = $mensa->food( $date, 'fulda' );
+}
+else {
+	// Filtered JSON on Date, Location, Category
+	$data = $mensa->filter( $date, 'fulda', $category );
+}
+
+// Convert to Alexa-friendly format
 $plain = $mensa->toPlainText( $data );
 
 // Send back data

@@ -58,6 +58,8 @@ class MensaClass
 
 	/*
 		Filters food on category
+		@param date - date to retrieve food for in format YYYY-MM-dd
+		@param location - location to retrieve food for, e.g. fulda
 		@param category - Category, to filter food ('Knoblauch', 'vegetarisch', 'Rind', 'Schwein', 'Geflügel', 'mensaVital')
 		@return - Json with filtered food
 	*/
@@ -79,7 +81,20 @@ class MensaClass
 		}
 		// result
         return $result;
-	}	
+	}
+	
+	/*
+		No filter, get all food that is served
+		@param date - date to retrieve food for in format YYYY-MM-dd
+		@param location - location to retrieve food for, e.g. fulda
+		@return - Json with food
+	*/
+	public function food($date, $location) {
+		$dom = $this->getDiv( $date, $location );
+		$food = $this->getJson( $dom );
+		// result
+		return $food;
+	}
 
 	/*
 		Gets rendered div from maxmanager.de
