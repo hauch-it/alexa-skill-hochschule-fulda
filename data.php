@@ -17,9 +17,8 @@ class MensaClass
 		if ($number == 0) {
 			return '<say-as interpret-as="interjection">Was zur Hölle. Nichts da.</say-as>';
 		}
-		
 		// Skip intro when there is only one entry
-		if ($number == 1) {
+		else if ($number == 1) {
 			return "Es gibt: " . $filteredJson[0]['title'];
 		}
 		else {
@@ -70,7 +69,6 @@ class MensaClass
 		$result = array();
 		foreach( $food as $entry ) {
 			// loop through each foods category
-			//var_dump($entry);
 			foreach( $entry['category'] as $cat ) {
 				// match
 				if ( strtolower($cat) == $category ) {
@@ -200,7 +198,6 @@ class MensaClass
 						$ingredients = array();
 						foreach($tds->childNodes as $imgs) {
 							if ($imgs->nodeName=='img') {
-								//print_r($imgs->attributes);
 								$title = $imgs->getAttribute('title');
 								$title = utf8_decode($title);
 								$ingredients[] = trim($title);
@@ -218,7 +215,7 @@ class MensaClass
 					}
         		}
     		}
-    		// add to list when new food item
+    		// Add to list when new food item
     		if ($foodSingle['title'] != "" && !in_array($foodSingle, $foodList)) {
     			array_push($foodList, $foodSingle);
     		}
