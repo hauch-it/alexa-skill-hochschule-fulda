@@ -64,23 +64,23 @@ class MensaClass
 		@return - Json with filtered food
 	*/
 	public function filter($date, $location, $category) {
-		$dom = $this->getDiv( $date, $location );
-		$food = $this->getJson( $dom );
+		$dom = $this->getDiv($date, $location);
+		$food = $this->getJson($dom);
 		
 		// filter by category
 		$result = array();
-		foreach( $food as $entry ) {
+		foreach($food as $entry) {
 			// loop through each foods category
-			foreach( $entry['category'] as $cat ) {
+			foreach($entry['category'] as $cat) {
 				// match
-				if ( strtolower($cat) == $category ) {
+				if (strtolower($cat) == $category) {
 					$result[] = $entry;
 					break;
 				}
 			}
 		}
 		// result
-        	return $result;
+    	return $result;
 	}
 	
 	/*
@@ -90,8 +90,8 @@ class MensaClass
 		@return - Json with food
 	*/
 	public function food($date, $location) {
-		$dom = $this->getDiv( $date, $location );
-		$food = $this->getJson( $dom );
+		$dom = $this->getDiv($date, $location);
+		$food = $this->getJson($dom);
 		// result
 		return $food;
 	}
@@ -238,7 +238,6 @@ class MensaClass
 		// return Json
 		return $foodList;
 	}
-	// end getJson()
-		
+	// end getJson()	
 }
 ?>
