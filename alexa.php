@@ -26,7 +26,7 @@ class AlexaClass {
     }
     
     public function isValidRequest($alexaRequest) {
-    
+    	
     }
     
     /*
