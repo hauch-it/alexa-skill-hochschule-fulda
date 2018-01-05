@@ -20,4 +20,4 @@ Wir haben versucht, die Befehle möglichst natürlich zu gestalten:
 - Alexa, frage Mensa Fulda was es diesen Freitag mit Geflügel gibt
 
 ### Credits
-Verwendung von [https://github.com/craigh411/alexa-request-validator](Alexa Request Validator), um den sicherheitstechnischen Anforderungen von Amazon gerecht zu werden.
+Verwendung von https://github.com/craigh411/alexa-request-validator, um den sicherheitstechnischen Anforderungen von Amazon gerecht zu werden.
