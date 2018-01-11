@@ -25,10 +25,6 @@ class AlexaClass {
         return $json;
     }
     
-    public function isValidRequest($alexaRequest) {
-    	
-    }
-    
     /*
     	Check, if welcome text should be read or not
     	@param alexaRequest - Request that is sent by Alexa
