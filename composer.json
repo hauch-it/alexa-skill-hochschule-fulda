@@ -1,0 +1,5 @@
+{
+    "require": {
+        "craigh/alexa-request-validator": "^1.0"
+    }
+}
