@@ -101,9 +101,6 @@ class MensaClass
 	public function filter($date, $location, $category) {
 		$dom = $this->getDiv($date, $location);
 		$food = $this->getJson($dom);
-		// filter by category 'fleisch' or 'fleischgerichte' and combine alls dishes with meat
-		
-		
 		
 		// filter by category
 		$result = array();
@@ -115,6 +112,7 @@ class MensaClass
 					$result[] = $entry;
 					break;
 				}
+				// filter by category is 'fleisch' or 'fleischgerichte' and combine alls dishes with meat
 				elseif ($category == 'fleisch' && (strtolower($cat) == 'rind' || strtolower($cat) == 'geflügel' || strtolower($cat) == 'schwein')) {
 					$result[] = $entry;
 					break;
