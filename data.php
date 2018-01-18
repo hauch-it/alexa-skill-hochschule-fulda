@@ -15,7 +15,7 @@ class MensaClass
 		
 		// No entry found
 		if ($number == 0) {
-			return '<say-as interpret-as="interjection">Was zur Hölle. Nichts da.</say-as>';
+			return '<say-as interpret-as="interjection">Der Computer sagt Nein.</say-as>';
 		}
 		// Skip intro when there is only one entry
 		else if ($number == 1) {
@@ -57,15 +57,53 @@ class MensaClass
 	}
 
 	/*
+		Fetch and Switch some synonyms the user could say. So Alexa get the correct value instead of the synonym
+		@param category - Category, to filter food ('Knoblauch', 'Vegetarisch', 'Rind', 'Schwein', 'Geflügel', 'mensaVital')
+		@return - cleaned category value
+	*/
+	
+	public function synonyms($category) {
+		$category = strtolower($category);
+		if ($category == 'schweinefleisch' || $category == 'schwein'){
+			$category = 'schwein';
+		}
+		elseif ($category == 'rindfleisch' || $category == 'rind'){
+			$category = 'rind';
+		}
+		elseif ($category == 'gefluegel' || $category == 'huhn' || $category == 'hühnchen'|| $category == 'hähnchen'|| $category == 'geflügelfleisch'){
+			$category = 'geflügel';
+		}
+		elseif ($category == 'vegetarisch' || $category == 'vegetarisches' || $category == 'ohne fleisch'|| $category == 'fleischfrei'|| $category == 'gemüse'){
+			$category = 'vegetarisch';
+		}
+		elseif ($category == 'mensavital' || $category == 'mensa vital'){
+			$category = 'mensavital';
+		}
+		
+		elseif ($category == 'fleischgerichte' || $category == 'fleisch'){
+			$category = 'fleisch';
+		}
+		
+		else{
+			$category = $category;
+		}
+		return $category;
+	}
+	
+	
+	/*
 		Filters food on category
 		@param date - date to retrieve food for in format YYYY-MM-dd
 		@param location - location to retrieve food for, e.g. fulda
 		@param category - Category, to filter food ('Knoblauch', 'vegetarisch', 'Rind', 'Schwein', 'Geflügel', 'mensaVital')
-		@return - Json with filtered food
+		@return - Array with filtered food
 	*/
 	public function filter($date, $location, $category) {
 		$dom = $this->getDiv($date, $location);
 		$food = $this->getJson($dom);
+		// filter by category 'fleisch' or 'fleischgerichte' and combine alls dishes with meat
+		
+		
 		
 		// filter by category
 		$result = array();
@@ -73,7 +111,11 @@ class MensaClass
 			// loop through each foods category
 			foreach($entry['category'] as $cat) {
 				// match
-				if (strtolower($cat) == $category) {
+				if (strtolower($cat) == $category && $category != 'fleisch') {
+					$result[] = $entry;
+					break;
+				}
+				elseif ($category == 'fleisch' && (strtolower($cat) == 'rind' || strtolower($cat) == 'geflügel' || strtolower($cat) == 'schwein')) {
 					$result[] = $entry;
 					break;
 				}
@@ -87,7 +129,7 @@ class MensaClass
 		No filter, get all food that is served
 		@param date - date to retrieve food for in format YYYY-MM-dd
 		@param location - location to retrieve food for, e.g. fulda
-		@return - Json with food
+		@return - Array with food
 	*/
 	public function food($date, $location) {
 		$dom = $this->getDiv($date, $location);
@@ -235,7 +277,7 @@ class MensaClass
     			array_push($foodList, $foodSingle);
     		}
 		}
-		// return Json
+		// return multiple array which can now easily encode to Json-format
 		return $foodList;
 	}
 	// end getJson()	
