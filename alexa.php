@@ -27,7 +27,7 @@ class AlexaClass {
     
     /*
     	Check, if welcome text should be read or not
-    	@param alexaRequest - Request that is sent by Alexa
+    	@param alexaRequest - Request that is sent by Alexa to the SSL-Server
     */
     public function isLaunchRequest($alexaRequest) {
     	// Extract from request
@@ -43,7 +43,7 @@ class AlexaClass {
     }
     
     /*
-    	When LaunchRequest, then let Alexa desribe the Skill
+    	When LaunchRequest, then let Alexa describe the Skill
     */
     public function handleLaunchRequest() {
     	$plainText = $this->welcome();
@@ -84,6 +84,9 @@ class AlexaClass {
 			$data = $mensa->food($date, 'fulda');
 		}
 		else {
+			// fetch and switch some synonyms from the user to the readable values which alexa need
+			$category = $mensa->synonyms($category);
+			
 			// Filtered JSON on Date, Location, Category
 			$data = $mensa->filter($date, 'fulda', $category);
 		}
@@ -91,8 +94,9 @@ class AlexaClass {
 		// Convert to Alexa-friendly format
 		$plain = $mensa->toPlainText($data);
 
-		// Send back data
-		return $this->response($plain);
+		// Send response back to Alexa
+		$responseToAlexa = $this->response($plain);
+		return $responseToAlexa;
     }
 
 }
