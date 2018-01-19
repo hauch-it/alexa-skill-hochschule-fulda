@@ -85,7 +85,7 @@ class AlexaClass {
 		}
 		else {
 			// fetch and switch some synonyms from the user to the readable values which alexa need
-			$category = $mensa->synonyms($category);
+			$category = $mensa->match($category);
 			
 			// Filtered JSON on Date, Location, Category
 			$data = $mensa->filter($date, 'fulda', $category);
