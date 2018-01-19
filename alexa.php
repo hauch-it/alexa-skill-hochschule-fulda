@@ -55,10 +55,10 @@ class AlexaClass {
     	Welcome text, that describes the Skills functionality
     */
     private function welcome() {
-    	$welcome = "Willkommen bei der Mensa in Fulda. Um dir vorlesen zu lassen, 
+    	$welcome = "Hallo, I bims, 1 Alexa Skill für die Mensa ing Fulda. Ums dir vorlesen zu lassen, 
     	welche Speisen angeboten werden, sage: Frage Mensa Fulda, was heute vegetarisch ist. 
     	Oder: Frage Mensa Fulda, was morgen vegan ist. Weitere Beispiele findest du in der 
-    	Beschreibung des Skills. Ich hoffe, ich bin Dir nützlich!";
+    	Beschreibung. Ich hoffe, I bims Dir nüdsli!";
     	
     	return $welcome;
     }
