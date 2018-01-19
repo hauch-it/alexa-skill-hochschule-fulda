@@ -57,36 +57,31 @@ class MensaClass
 	}
 
 	/*
-		Fetch and Switch some synonyms the user could say. So Alexa get the correct value instead of the synonym
+		Match some synonyms the user could say, so Alexa gets the correct value instead of the synonym
 		@param category - Category, to filter food ('Knoblauch', 'Vegetarisch', 'Rind', 'Schwein', 'Geflügel', 'mensaVital')
 		@return - cleaned category value
 	*/
 	
-	public function synonyms($category) {
+	public function match($category) {
+		// Key-Value to match category
+		$array = array(
+			"schweinefleisch" => "schwein",
+			"rindfleisch" => "rind",
+			"huhn" => "geflügel",
+			"hühnchen" => "geflügel",
+			"hähnchen" => "geflügel",
+			"geflügelfleisch" => "geflügel",
+			"vegetarisches" => "vegetarisch",
+			"ohne fleisch" => "vegetarisch",
+			"gemüse" => "vegetarisch",
+			"mensa vital" => "mensavital",
+			"fleischgerichte" => "fleisch"
+		);
+	
 		$category = strtolower($category);
-		if ($category == 'schweinefleisch' || $category == 'schwein'){
-			$category = 'schwein';
-		}
-		elseif ($category == 'rindfleisch' || $category == 'rind'){
-			$category = 'rind';
-		}
-		elseif ($category == 'gefluegel' || $category == 'huhn' || $category == 'hühnchen'|| $category == 'hähnchen'|| $category == 'geflügelfleisch'){
-			$category = 'geflügel';
-		}
-		elseif ($category == 'vegetarisch' || $category == 'vegetarisches' || $category == 'ohne fleisch'|| $category == 'fleischfrei'|| $category == 'gemüse'){
-			$category = 'vegetarisch';
-		}
-		elseif ($category == 'mensavital' || $category == 'mensa vital'){
-			$category = 'mensavital';
-		}
+		// Replace category using array
+		$category = str_replace(array_keys($array), $array, $category);
 		
-		elseif ($category == 'fleischgerichte' || $category == 'fleisch'){
-			$category = 'fleisch';
-		}
-		
-		else{
-			$category = $category;
-		}
 		return $category;
 	}
 	
