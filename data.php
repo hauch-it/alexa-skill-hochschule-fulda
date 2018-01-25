@@ -75,6 +75,7 @@ class MensaClass
 			"ohne fleisch" => "vegetarisch",
 			"fleischfrei" => "vegetarisch",
 			"gemüse" => "vegetarisch",
+			"veganes" => "vegan",
 			"mensa vital" => "mensavital",
 			"fleischgerichte" => "fleisch"
 		);
