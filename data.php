@@ -73,6 +73,7 @@ class MensaClass
 			"geflügelfleisch" => "geflügel",
 			"vegetarisches" => "vegetarisch",
 			"ohne fleisch" => "vegetarisch",
+			"fleischfrei" => "vegetarisch",
 			"gemüse" => "vegetarisch",
 			"mensa vital" => "mensavital",
 			"fleischgerichte" => "fleisch"
@@ -109,6 +110,11 @@ class MensaClass
 				}
 				// filter by category is 'fleisch' or 'fleischgerichte' and combine alls dishes with meat
 				elseif ($category == 'fleisch' && (strtolower($cat) == 'rind' || strtolower($cat) == 'geflügel' || strtolower($cat) == 'schwein')) {
+					$result[] = $entry;
+					break;
+				}
+				// put vegan meals into vegetarian category. It is still possible to ask only for vegan meals.
+				elseif ($category == 'vegetarisch' && (strtolower($cat) == 'vegan' || strtolower($cat) == 'vegetarisch')) {
 					$result[] = $entry;
 					break;
 				}
