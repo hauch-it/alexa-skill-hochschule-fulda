@@ -4,13 +4,17 @@ class MensaClass
 {
 
 	/*
-		Converts a filtered food Json Object to plain text, that can be read by Alexa
-		@param filteredJson - Object, that is retrieved by @function filter
-		@return Plain text
+		Converts a filtered food array to plain text, to be read by Alexa
+		@param filteredArray - array, that is retrieved by @function filter
+		@param number - count of array entries
+		@param wish - string with final sentence
+		@param plainText - string to be read by Alexa
+		@return plainText
+		@author Robin, Sabrina, Nicoleta
 	*/
-	public function toPlainText($filteredJson) {
-		// Count entries
-		$number = count($filteredJson);
+	public function toPlainText($filteredArray) {
+		// Count entries of food
+		$number = count($filteredArray);
 		$plainText = "Es gibt " . $number . " Gerichte.";
 		
 		// No entry found
@@ -19,13 +23,13 @@ class MensaClass
 		}
 		// Skip intro when there is only one entry
 		else if ($number == 1) {
-			return "Es gibt: " . $filteredJson[0]['title'];
+			return "Es gibt: " . $filteredArray[0]['title'];
 		}
 		else {
 			// loop through entries
 			$rnumber = 1;
 			for ($i = 0; $i < $number; $i++) {
-				$plainText .= " Das " . $rnumber . ". Gericht ist: " . $filteredJson[$i]['title'] . ".";
+				$plainText .= " Das " . $rnumber . ". Gericht ist: " . $filteredArray[$i]['title'] . ".";
 				$rnumber++;
 			}
 			// add wish
@@ -36,6 +40,12 @@ class MensaClass
 		
 	}
 	
+	/*
+		Wish as final sentence to be read by Alexa
+		@param greetings - array with several final sentence with Alexa Markup-Language
+		@return greetings - return random sentence
+		@author Nicolai
+	*/
 	public function getWish() {
 		$greetings = array(
 			' <say-as interpret-as="interjection">Lass es dir schmecken</say-as>',
@@ -57,9 +67,11 @@ class MensaClass
 	}
 
 	/*
-		Match some synonyms the user could say, so Alexa gets the correct value instead of the synonym
+		Match some synonyms the user could say, so alexa.php gets the correct value instead of the synonym
 		@param category - Category, to filter food ('Knoblauch', 'Vegetarisch', 'Rind', 'Schwein', 'Geflügel', 'mensaVital')
+		@param array - Key Value pairs of synonyms and category values
 		@return - cleaned category value
+		@author Dominic
 	*/
 	
 	public function match($category) {
@@ -90,26 +102,29 @@ class MensaClass
 	
 	/*
 		Filters food on category
-		@param date - date to retrieve food for in format YYYY-MM-dd
+		@param dom - HTML Div from maxmanager.de
+		@param food - cleaned div => array with food entries
+		@param date - date to retrieve food for with date-format YYYY-MM-dd
 		@param location - location to retrieve food for, e.g. fulda
 		@param category - Category, to filter food ('Knoblauch', 'vegetarisch', 'Rind', 'Schwein', 'Geflügel', 'mensaVital')
 		@return - Array with filtered food
+		@author Dominic
 	*/
 	public function filter($date, $location, $category) {
 		$dom = $this->getDiv($date, $location);
-		$food = $this->getJson($dom);
+		$food = $this->getArray($dom);
 		
 		// filter by category
 		$result = array();
 		foreach($food as $entry) {
-			// loop through each foods category
+			// loop through each food category
 			foreach($entry['category'] as $cat) {
-				// match
+				// compare the category from user with the category from food array and build result array
 				if (strtolower($cat) == $category && $category != 'fleisch') {
 					$result[] = $entry;
 					break;
 				}
-				// filter by category is 'fleisch' or 'fleischgerichte' and combine alls dishes with meat
+				// filter by category is 'fleisch' or 'fleischgerichte' and combine all dishes with meat
 				elseif ($category == 'fleisch' && (strtolower($cat) == 'rind' || strtolower($cat) == 'geflügel' || strtolower($cat) == 'schwein')) {
 					$result[] = $entry;
 					break;
@@ -126,14 +141,15 @@ class MensaClass
 	}
 	
 	/*
-		No filter, get all food that is served
-		@param date - date to retrieve food for in format YYYY-MM-dd
+		No category is given by user, so return all entries
+		@param date - date to retrieve food for with date-format YYYY-MM-dd
 		@param location - location to retrieve food for, e.g. fulda
 		@return - Array with food
+		@author Sabrina
 	*/
 	public function food($date, $location) {
 		$dom = $this->getDiv($date, $location);
-		$food = $this->getJson($dom);
+		$food = $this->getArray($dom);
 		// result
 		return $food;
 	}
@@ -142,7 +158,8 @@ class MensaClass
 		Gets rendered div from maxmanager.de
 		@param date - Date (yyyy-mm-dd)
 		@param location - Name of Mensa ('fulda', 'mensa-thm-in-giessen', 'mensa-thm-in-friedberg', 'mensa-otto-behaghel-strasse', 'otto-eger-heim', 'cafe-kunstweg', 'campustor', 'care', 'cafeteria-ifz', 'juwi')
-		@return - rendered div
+		@return - rendered div with stripped HTML Tags we dont need
+		@author Dominic
 	*/
 	private function getDiv($date, $location) {
 		// build POSTFIELDS
@@ -179,9 +196,10 @@ class MensaClass
 	/*
 		Parses rendered div from @getDiv($date, $location)
 		@param div - Div to render
-		@return - Json object with parsed data
-	 */
-	 private function getJson($div) {
+		@return - multiple Array with parsed data
+		@author Nicolai & Dominic (Logic), Nicolai (Coding), Dominic (Coding, Testing => Fixes)
+	*/
+	 private function getArray($div) {
 	 	// build DOM
 	 	@$dom = new DOMDocument();
 		@$dom->loadHTML($div);
@@ -280,6 +298,6 @@ class MensaClass
 		// return multiple array which can now easily encode to Json-format
 		return $foodList;
 	}
-	// end getJson()	
+	// end getArray()	
 }
 ?>
