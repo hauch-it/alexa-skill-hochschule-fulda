@@ -50,6 +50,13 @@ class AlexaClass {
     	
     	return $welcome;
     }
+
+    private function gag() {
+        $gag ='Das weiß ich leider nicht. Ich versuche aber, ein gutes Wort bei Olli einzulegen.
+        <amazon:effect name="whispered">Olli, rück die Credits raus.</amazon:effect>';
+
+        return $gag;
+    }
     
 	/*
 		IntentRequest
@@ -62,6 +69,18 @@ class AlexaClass {
 		@author Dominic
     */
     public function handleIntentRequest($alexaRequest) {
+
+        // OliverIntent
+        $intent = $alexaRequest->request->intent->name;
+        if (strcmp($intent, 'OliverIntent') == 0) {
+            $text = $this->gag();
+            // Send response back to Alexa
+            $responseToAlexa = $this->response($text);
+            return $responseToAlexa;
+        }
+
+        // FilterIntent
+
     	// Class, used to get data
     	$mensa = new MensaClass();
     

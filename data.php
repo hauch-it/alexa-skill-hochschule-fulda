@@ -247,6 +247,7 @@ class MensaClass
 									// Some cleaning
 									$title = str_replace(" - ab 0,70 €", "", $title);
 									$title = str_replace("aus ökol. Anbau DE-ÖKO-007", "aus ökologischem Anbau", $title);
+									$title = str_replace("DE-ÖKO-007", "", $title);
 									$title = str_replace("Textzusätze Speiseleitsystem (leere Rezeptur!) ", "", $title);
 						
 									// Mensa Vital fix (remove p.P.)
