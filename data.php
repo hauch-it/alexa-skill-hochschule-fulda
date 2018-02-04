@@ -19,11 +19,11 @@ class MensaClass
 		
 		// No entry found
 		if ($number == 0) {
-			return '<say-as interpret-as="interjection">Der Computer sagt Nein.</say-as>';
+			return '<say-as interpret-as="interjection">Verdammt</say-as>. Ich habe leider kein Essen für dich finden können. Musst du wohl mal selbst tätig werden! <say-as interpret-as="interjection">Viel Glück</say-as>.';
 		}
 		// Skip intro when there is only one entry
 		else if ($number == 1) {
-			return "Es gibt: " . $filteredArray[0]['title'];
+			return "Es gibt: " . $filteredArray[0]['title'] . '.' . $this->getWish();
 		}
 		else {
 			// loop through entries
@@ -56,6 +56,12 @@ class MensaClass
 			' <say-as interpret-as="interjection">Guten Appetit</say-as>',
 			' <say-as interpret-as="interjection">bon appetit</say-as>',
 			' <say-as interpret-as="interjection">Arrivederci</say-as>',
+			' <say-as interpret-as="interjection">Bis bald</say-as>',
+			' <say-as interpret-as="interjection">Geh nur</say-as>',
+			' <say-as interpret-as="interjection">Igitt</say-as>',
+			' <say-as interpret-as="interjection">Mahlzeit</say-as>',
+			' <say-as interpret-as="interjection">Tschö</say-as>',
+			' <say-as interpret-as="interjection">Keine Ursache</say-as>',
 			' <say-as interpret-as="interjection">Zum Wohl</say-as>'
 		);
 		
@@ -102,12 +108,12 @@ class MensaClass
 	
 	/*
 		Filters food on category
-		@param dom - HTML Div from maxmanager.de
-		@param food - cleaned div => array with food entries
-		@param date - date to retrieve food for with date-format YYYY-MM-dd
+		@param dom - HTML div from maxmanager.de
+		@param food - array with food entries (own format)
+		@param date - date to retrieve food for (YYYY-MM-dd)
 		@param location - location to retrieve food for, e.g. fulda
-		@param category - Category, to filter food ('Knoblauch', 'vegetarisch', 'Rind', 'Schwein', 'Geflügel', 'mensaVital')
-		@return - Array with filtered food
+		@param category - category to filter on ('Knoblauch', 'vegetarisch', 'Rind', 'Schwein', 'Geflügel', 'mensaVital')
+		@return - array with filtered food
 		@author Dominic
 	*/
 	public function filter($date, $location, $category) {
@@ -118,18 +124,20 @@ class MensaClass
 		$result = array();
 		foreach($food as $entry) {
 			// loop through each food category
+			// Nicolai
 			foreach($entry['category'] as $cat) {
 				// compare the category from user with the category from food array and build result array
 				if (strtolower($cat) == $category && $category != 'fleisch') {
 					$result[] = $entry;
 					break;
 				}
-				// filter by category is 'fleisch' or 'fleischgerichte' and combine all dishes with meat
+				// if 'fleisch' or 'fleischgerichte' then combine
+				// Dominic
 				elseif ($category == 'fleisch' && (strtolower($cat) == 'rind' || strtolower($cat) == 'geflügel' || strtolower($cat) == 'schwein')) {
 					$result[] = $entry;
 					break;
 				}
-				// put vegan meals into vegetarian category. It is still possible to ask only for vegan meals.
+				// if 'vegetarisch' then put 'vegan' to list (still possible to ask for 'vegan' only)
 				elseif ($category == 'vegetarisch' && (strtolower($cat) == 'vegan' || strtolower($cat) == 'vegetarisch')) {
 					$result[] = $entry;
 					break;
@@ -142,9 +150,9 @@ class MensaClass
 	
 	/*
 		No category is given by user, so return all entries
-		@param date - date to retrieve food for with date-format YYYY-MM-dd
+		@param date - date to retrieve food for (YYYY-MM-dd)
 		@param location - location to retrieve food for, e.g. fulda
-		@return - Array with food
+		@return - array with food
 		@author Sabrina
 	*/
 	public function food($date, $location) {
@@ -156,9 +164,9 @@ class MensaClass
 
 	/*
 		Gets rendered div from maxmanager.de
-		@param date - Date (yyyy-mm-dd)
+		@param date - Format (yyyy-mm-dd)
 		@param location - Name of Mensa ('fulda', 'mensa-thm-in-giessen', 'mensa-thm-in-friedberg', 'mensa-otto-behaghel-strasse', 'otto-eger-heim', 'cafe-kunstweg', 'campustor', 'care', 'cafeteria-ifz', 'juwi')
-		@return - rendered div with stripped HTML Tags we dont need
+		@return - rendered div with stripped HTML Tags we don't need
 		@author Dominic
 	*/
 	private function getDiv($date, $location) {
@@ -188,6 +196,8 @@ class MensaClass
 
 		// cURL Result
 		$result = curl_exec($ch);
+		// Strip tags (makes parsing easier)
+		// Nicolai
 		$result = strip_tags($result, '<html><body><table><tbody><div><tr><td><span><img><p><sup>');
 		return $result;
 	}
@@ -197,7 +207,7 @@ class MensaClass
 		Parses rendered div from @getDiv($date, $location)
 		@param div - Div to render
 		@return - multiple Array with parsed data
-		@author Nicolai & Dominic (Logic), Nicolai (Coding), Dominic (Coding, Testing => Fixes)
+		@author Nicolai (Logic, Coding), Dominic (Logic, Coding, Bugfixes)
 	*/
 	 private function getArray($div) {
 	 	// build DOM
@@ -291,8 +301,8 @@ class MensaClass
 					}
         		}
     		}
-    		// Add to list when new food item
-    		if ($foodSingle['title'] != "" && !in_array($foodSingle, $foodList)) {
+    		// Add to list when new food item (skip Beilagen and Kartoffeln)
+    		if ($foodSingle['title'] != "" && !in_array($foodSingle, $foodList) && (strcmp($foodSingle['title'], 'Beilagenauswahl') != 0 || strcmp($foodSingle['title'], 'Kartoffeln aus') != 0)) {
     			array_push($foodList, $foodSingle);
     		}
 		}
