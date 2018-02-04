@@ -19,7 +19,7 @@ class MensaClass
 		
 		// No entry found
 		if ($number == 0) {
-			return '<say-as interpret-as="interjection">Verdammt</say-as>. Ich habe leider kein Essen für dich finden können. Musst du wohl mal selbst tätig werden! <say-as interpret-as="interjection">Viel Glück</say-as>.';
+			return '<say-as interpret-as="interjection">Verdammt</say-as>. Ich habe leider kein Essen für dich finden können. Musst du wohl selbst tätig werden! <say-as interpret-as="interjection">Viel Glück</say-as>.';
 		}
 		// Skip intro when there is only one entry
 		else if ($number == 1) {
@@ -202,6 +202,23 @@ class MensaClass
 		return $result;
 	}
 	// end getDiv()
+
+
+	private function contains($haystack,$needle) {
+		$needle = trim($needle);  
+  		if (strpos($haystack,$needle)!==false)  
+    		return true;  
+  		else  
+    		return false;  
+	}
+
+	private function startsWith($haystack,$needle) {
+		$needle = trim($needle);  
+  		if (strpos($haystack,$needle)===0)  
+    		return true;  
+  		else  
+    		return false;  
+	}  
 	
 	/*
 		Parses rendered div from @getDiv($date, $location)
@@ -258,7 +275,7 @@ class MensaClass
 									$title = str_replace(" - ab 0,70 €", "", $title);
 									$title = str_replace("aus ökol. Anbau DE-ÖKO-007", "aus ökologischem Anbau", $title);
 									$title = str_replace("DE-ÖKO-007", "", $title);
-									$title = str_replace("Textzusätze Speiseleitsystem (leere Rezeptur!) ", "", $title);
+									$title = str_replace("Textzusätze Speiseleitsystem (leere Rezeptur!)", "", $title);
 						
 									// Mensa Vital fix (remove p.P.)
 									$mensaVital = '.';
@@ -271,8 +288,9 @@ class MensaClass
 								// Add to List
                                 // Add 'Pasta' to String when the String starts with ' mit'
 								if ($title != "" && substr($title, 0, 4) == ' mit') {
-									$foodSingle['title'] = ' Pasta'.$title;
-								} elseif($title != "" && substr($title, 0, 4) != ' mit') {
+									$foodSingle['title'] = ' Pasta' . $title;
+								} 
+								elseif ($title != "" && substr($title, 0, 4) != ' mit') {
                                     $foodSingle['title'] = $title;
                                 }
 						}
@@ -301,8 +319,8 @@ class MensaClass
 					}
         		}
     		}
-    		// Add to list when new food item (skip Beilagen and Kartoffeln)
-    		if ($foodSingle['title'] != "" && !in_array($foodSingle, $foodList) && (strcmp($foodSingle['title'], 'Beilagenauswahl') != 0 || strcmp($foodSingle['title'], 'Kartoffeln aus') != 0)) {
+    		// Add to list when new food item (skip Beilagenauswahl and Kartoffeln)
+    		if ($foodSingle['title'] != "" && !in_array($foodSingle, $foodList) && stristr($foodSingle['title'], 'Beilagenauswahl') == false && stristr($foodSingle['title'], 'Kartoffeln aus') == false) {
     			array_push($foodList, $foodSingle);
     		}
 		}
